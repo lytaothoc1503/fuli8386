@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Fuli8386 — Biểu Mẫu</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Noto+Serif:wght@600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3" integrity="sha384-dl/4LkSyQ4uEucc48NM6VDZLAjLLq9yMzZ5JLXumBq7Ld33XBof73hseOqPhO89+" crossorigin="anonymous"></script>
+  <script src="config.js?v=20261016a"></script>
+  <script src="phieu.js?v=20261019c"></script>
+  <script src="bieu-mau.js?v=20261023c" defer></script>
+  <script src="vendor/html2canvas.min.js" defer></script>
+  <style>
+    :root { --red: #8a0f1f; --red-dark: #5c0a15; --red-deep: #3d0810; --gold: #c99a3e; --gold-light: #e9c877; --border: #e3cfa3; --text: #2a1510; --muted: #8a6a52; --cream: #fffaf0; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; color: var(--text); font-family: 'Montserrat', Arial, sans-serif; background: radial-gradient(1200px 700px at 50% -10%, #7a0e1c 0%, var(--red) 38%, var(--red-deep) 100%); background-attachment: fixed; }
+    [hidden] { display: none !important; }
+
+    /* ===== Nền trang trí: ảnh cung điện cổ + nhành lộc lá (vector) ===== */
+    .bg-art { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    .bg-art .bg-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .32; filter: saturate(1.05); }
+    .bg-art .bg-tint { position: absolute; inset: 0; background: radial-gradient(1200px 700px at 50% -10%, rgba(122,14,28,.55) 0%, rgba(138,15,31,.78) 38%, rgba(61,8,16,.94) 100%); }
+    .bg-art .leaf { position: absolute; opacity: .5; }
+    .bg-art .leaf.tl { top: -10px; left: -10px; width: 130px; transform: rotate(-8deg); }
+    .bg-art .leaf.br { bottom: -10px; right: -10px; width: 150px; transform: rotate(172deg); }
+    .bg-art .leaf.tr { top: 10px; right: 6%; width: 70px; transform: rotate(18deg); opacity: .3; }
+
+    .wrap { position: relative; z-index: 1; max-width: 1000px; margin: 0 auto; padding: 20px 16px 60px; }
+    .top-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .top-bar h2 { font-size: 18px; color: var(--gold-light); margin: 0; font-family: 'Noto Serif', serif; }
+    .btn-add, .btn-export { background: linear-gradient(135deg, var(--red), var(--red-dark)); color: #fdf3df; border: 1px solid var(--gold); border-radius: 8px; padding: 9px 14px; font-weight: 700; font-size: 13px; cursor: pointer; box-shadow: 0 2px 6px rgba(90,10,20,.25); }
+    .btn-export { background: #fffaf0; color: var(--red-dark); border: 1.5px solid var(--gold); }
+    .btn-add:hover, .btn-export:hover { filter: brightness(1.05); }
+    .fin-note { font-size: 12px; color: #8a6d3b; background: #fff7e6; border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; }
+    .fm-bar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; } .fm-bar select { padding: 10px; border: 1px solid var(--border); border-radius: 8px; font: inherit; min-width: 240px; flex: 1; background: #fffdf8; }
+    .fm-sync { border-radius: 10px; padding: 12px 14px; margin: 10px 0; font-size: 13.5px; line-height: 1.55; } .fm-sync.ok { background: #e8f7ee; border: 1px solid #9bd5b0; color: #14532d; } .fm-sync.warn { background: #fff6e5; border: 1px solid #f0cf8a; color: #6b4a06; }
+    .fm-sync-row { display: none !important; } /* đối tác chỉ xem, không có quyền sửa/tạo đơn — ẩn mọi nút ghi dữ liệu */
+    .fm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; margin-bottom: 14px; }
+    .fm-f span { display: block; font-size: 11px; color: var(--muted); margin-bottom: 3px; } .fm-f input { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; font: inherit; font-size: 13px; background: #fffdf8; }
+    .fm-f input[type="file"] { padding: 6px 4px; } .fm-file-st { display: block; margin-top: 3px; font-size: 11px; color: var(--muted); } .fm-file-st a { color: var(--red); }
+    .dpaper { background: #fff; max-width: 794px; margin: 0 auto 24px; padding: 48px 56px; box-shadow: 0 10px 34px rgba(61,8,16,.35); font-family: 'Times New Roman', Times, serif; font-size: 15px; line-height: 1.6; color: #000; border-radius: 2px; }
+    .dpaper * { font-family: inherit; } .dpaper p { margin: 6px 0; text-align: justify; } .dpaper .dp-c { text-align: center; }
+    .dp-qh { text-align: center; font-size: 14px; line-height: 1.5; margin-bottom: 14px; } .dp-title { text-align: center; font-size: 19px; margin: 10px 0 6px; }
+    .dp-sign { display: flex; justify-content: space-between; text-align: center; margin: 22px 0 70px; gap: 20px; } .dp-sign > div { flex: 1; }
+    .dpaper.is-land { max-width: 1100px; padding: 0; background: none; box-shadow: none; } .dp-page + .dp-page { margin-top: 28px; padding-top: 28px; border-top: 2px dashed #bbb; }
+    .dp-page.dp-land { margin-left: -56px; margin-right: -56px; }
+    .fm-msgs { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-bottom: 18px; } .fm-msg { background: #fffdf8; border: 1px solid var(--border); border-radius: 10px; padding: 10px; } .fm-msg b { display: block; font-size: 12px; margin-bottom: 6px; color: var(--red-dark); } .fm-msg textarea { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 8px; font: inherit; font-size: 12.5px; resize: vertical; margin-bottom: 6px; }
+    @media print { body.print-doc > *:not(.wrap) { display: none !important; } body.print-doc .wrap > *:not(.dpaper) { display: none !important; } .dp-page { break-after: page; } .dp-page:last-child { break-after: auto; } .dp-page + .dp-page { border: 0; margin: 0; padding: 0; } .dp-page.dp-land { margin: 0; } body.print-doc .dpaper.is-land { max-width: none; } }
+    @media (max-width: 768px) { .dp-page.dp-land { margin-left: -16px; margin-right: -16px; } .dpaper { padding: 22px 16px; font-size: 14px; } }
+
+    .auth-wrap { position: relative; z-index: 1; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px 16px; }
+    .auth-card { display: grid; grid-template-columns: 1.05fr 1fr; width: 100%; max-width: 760px; background: #fffaf0; border-radius: 20px; overflow: hidden; box-shadow: 0 30px 70px rgba(30,4,9,.55), 0 0 0 1.5px var(--gold); }
+    .auth-visual { position: relative; min-height: 420px; }
+    .auth-visual img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; }
+    .auth-visual::after { content: ""; position: absolute; inset: 0; background: linear-gradient(190deg, rgba(61,8,16,.05) 10%, rgba(61,8,16,.55) 62%, rgba(61,8,16,.92) 100%), linear-gradient(90deg, rgba(61,8,16,.35), transparent 40%); }
+    .auth-visual .av-text { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 24px 24px; color: #fdf3df; z-index: 1; }
+    .auth-visual .av-text .av-kicker { display: inline-block; font-size: 10.5px; letter-spacing: .28em; color: var(--gold-light); border: 1px solid rgba(233,200,119,.6); border-radius: 999px; padding: 4px 10px; margin-bottom: 10px; }
+    .auth-visual .av-text b { display: block; font-family: 'Noto Serif', serif; font-size: 30px; letter-spacing: .04em; text-shadow: 0 2px 10px rgba(0,0,0,.4); }
+    .auth-visual .av-text span { display: block; font-size: 12.5px; color: #f0dcae; margin-top: 4px; }
+    .auth-form { padding: 38px 34px; display: flex; flex-direction: column; justify-content: center; }
+    .auth-form .af-eyebrow { font-size: 11px; letter-spacing: .14em; color: var(--gold); font-weight: 700; margin-bottom: 6px; }
+    .auth-form h1 { font-family: 'Noto Serif', serif; font-size: 23px; letter-spacing: .02em; color: var(--red-dark); margin: 0 0 4px; }
+    .auth-form .sub { font-size: 12.5px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+    .auth-form label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+    .auth-form input { width: 100%; padding: 12px 13px; border: 1px solid var(--border); border-radius: 9px; font: inherit; margin-bottom: 14px; background: #fffdf8; transition: border-color .15s, box-shadow .15s; }
+    .auth-form input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,154,62,.18); }
+    .auth-form button { width: 100%; padding: 13px; background: linear-gradient(135deg, var(--red), var(--red-dark)); color: #fdf3df; border: 1px solid var(--gold); border-radius: 9px; font-weight: 700; letter-spacing: .04em; font-size: 13.5px; cursor: pointer; box-shadow: 0 6px 16px rgba(90,10,20,.35); }
+    .auth-form button:hover { filter: brightness(1.06); } .auth-form button:disabled { opacity: .6; cursor: default; }
+    .auth-msg { font-size: 13px; color: #b91c1c; min-height: 18px; margin-top: 10px; }
+    .auth-foot { margin-top: 22px; padding-top: 14px; border-top: 1px dashed var(--border); font-size: 11.5px; color: var(--muted); text-align: center; }
+    .auth-foot a { color: var(--red); font-weight: 700; text-decoration: none; }
+    .auth-foot a:hover { text-decoration: underline; }
+    @media (max-width: 680px) { .auth-card { grid-template-columns: 1fr; max-width: 420px; border-radius: 18px; } .auth-visual { min-height: 170px; } .auth-visual img { object-position: 50% 24%; } .auth-visual .av-text b { font-size: 24px; } .auth-form { padding: 28px 24px 30px; } }
+
+    header.ptop { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: linear-gradient(120deg, var(--red-dark), var(--red) 55%, var(--red-dark)); border-bottom: 2px solid var(--gold); color: #fdf3df; }
+    header.ptop .brand { display: flex; align-items: center; gap: 10px; }
+    header.ptop .brand img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--gold); }
+    header.ptop .brand b { font-family: 'Noto Serif', serif; font-size: 16px; letter-spacing: .05em; }
+    header.ptop .brand small { display: block; font-size: 10px; letter-spacing: .18em; color: var(--gold-light); opacity: .9; }
+    header.ptop button { background: rgba(255,255,255,.08); color: #fdf3df; border: 1px solid var(--gold); border-radius: 8px; padding: 7px 14px; font-size: 12.5px; cursor: pointer; }
+    header.ptop button:hover { background: rgba(255,255,255,.16); }
+
+    .section-card { background: rgba(255,250,240,.9); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+  </style>
+</head>
+<body>
+<div class="bg-art" aria-hidden="true">
+  <img class="bg-photo" src="images/fuli8386-nen.webp" alt="" />
+  <div class="bg-tint"></div>
+  <svg class="leaf tl" viewBox="0 0 120 120"><g fill="none" stroke="#e9c877" stroke-width="2.4"><path d="M10 10c30 4 46 20 50 50-30-4-46-20-50-50Z" fill="#c99a3e" opacity=".55"/><path d="M14 14c24 8 34 22 38 42" stroke="#8a0f1f" stroke-width="1.4" opacity=".6"/><path d="M34 6c22 10 30 26 32 46-20-8-28-24-32-46Z" fill="#e9c877" opacity=".4"/></g></svg>
+  <svg class="leaf tr" viewBox="0 0 120 120"><g fill="none" stroke="#e9c877" stroke-width="2.4"><path d="M10 10c30 4 46 20 50 50-30-4-46-20-50-50Z" fill="#c99a3e" opacity=".5"/></g></svg>
+  <svg class="leaf br" viewBox="0 0 120 120"><g fill="none" stroke="#e9c877" stroke-width="2.4"><path d="M10 10c30 4 46 20 50 50-30-4-46-20-50-50Z" fill="#c99a3e" opacity=".55"/><path d="M14 14c24 8 34 22 38 42" stroke="#8a0f1f" stroke-width="1.4" opacity=".6"/><path d="M34 6c22 10 30 26 32 46-20-8-28-24-32-46Z" fill="#e9c877" opacity=".4"/></g></svg>
+</div>
+
+<div class="auth-wrap no-print" id="login-box">
+  <div class="auth-card">
+    <div class="auth-visual">
+      <img src="images/fuli8386-logo.webp" alt="" />
+      <div class="av-text"><span class="av-kicker">ĐỐI TÁC &amp; SALE</span><b>FULI8386</b><span>Cổng Biểu Mẫu dành riêng cho đối tác hợp tác</span></div>
+    </div>
+    <div class="auth-form">
+      <div class="af-eyebrow">XIN CHÀO</div>
+      <h1>Đăng nhập đối tác</h1>
+      <div class="sub">Dùng email và mật khẩu đã được cấp để vào xem đơn và làm biểu mẫu.</div>
+      <form id="login-form" autocomplete="off">
+        <label for="pl-email">Email</label>
+        <input type="email" id="pl-email" required autocomplete="username" placeholder="email@..." />
+        <label for="pl-pass">Mật khẩu</label>
+        <input type="password" id="pl-pass" required autocomplete="current-password" placeholder="mật khẩu" />
+        <button type="submit" id="pl-btn">Đăng nhập</button>
+        <div class="auth-msg" id="pl-msg"></div>
+      </form>
+      <div class="auth-foot">Chưa có tài khoản? Nhắn Telegram <a href="https://t.me/Xmagic09" target="_blank" rel="noopener">@Xmagic09</a><span id="af-email-wrap"></span> để được cấp quyền.</div>
+    </div>
+  </div>
+</div>
+
+<div id="main-box" hidden>
+  <header class="ptop no-print">
+    <div class="brand"><img src="images/fuli8386-logo.webp" alt="Fuli8386" />
+      <div><b>FULI8386</b><small>BIỂU MẪU ĐỐI TÁC</small></div></div>
+    <button id="logout-btn">Đăng xuất</button>
+  </header>
+  <div class="wrap">
+    <div class="top-bar no-print"><h2>Biểu Mẫu</h2><div><button class="btn-add" onclick="printForm()">In / Lưu PDF</button> <button class="btn-export" onclick="exportFormImage()">🖼️ Xuất ảnh (PNG)</button></div></div>
+    <p class="fin-note no-print">Chỉ thấy đúng đơn được giao cho email này. Thông tin điền thêm trên mẫu chỉ nằm trong trình duyệt, không lưu lại. Xuất ảnh/in trên điện thoại vẫn giữ đúng bố cục như trên máy tính.</p>
+    <div class="section-card no-print">
+      <div class="fm-bar"><select id="fm-tpl"></select><select id="fm-booking"></select></div>
+      <p class="fin-note" id="fm-note" style="margin-bottom:0"></p>
+    </div>
+    <div class="section-card no-print" id="fm-auto-box">
+      <label for="fm-auto-text" style="display:block;font-size:12.5px;font-weight:700;color:var(--red-dark);margin-bottom:6px">⚡ Dán tin nhắn khách gửi, tự động điền ô bên dưới</label>
+      <textarea id="fm-auto-text" rows="3" placeholder="Dán nguyên văn tin nhắn khách (tên, SĐT, ngày nhận/trả phòng, số khách...) rồi bấm Tự động điền" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font:inherit;font-size:13px;background:#fffdf8;resize:vertical"></textarea>
+      <div style="margin-top:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <button type="button" class="btn-add" onclick="autoFillFromText()">⚡ Tự động điền</button>
+        <span id="fm-auto-msg" style="font-size:11.5px;color:var(--muted)"></span>
+      </div>
+    </div>
+    <div class="fm-grid section-card no-print" id="fm-fields"></div>
+    <div class="no-print" id="fm-sync"></div>
+    <h3 class="no-print" style="font-size:14px;margin:6px 0 8px;color:var(--gold-light)">Tin nhắn gửi khách (sao chép, dán vào Messenger/Zalo)</h3>
+    <div class="fm-msgs no-print" id="fm-msg"></div>
+    <div class="dpaper" id="fm-preview"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const CFG = (window.SITE && window.SITE.supabase) || {};
+  const $ = (id) => document.getElementById(id);
+  const msg = $('pl-msg'), btn = $('pl-btn');
+  // email liên hệ lấy từ config.js (contacts.email), chỉ hiện khi đã điền
+  (function () {
+    const em = window.SITE && window.SITE.contacts && window.SITE.contacts.email;
+    const wrap = $('af-email-wrap');
+    if (em && wrap) wrap.innerHTML = ' hoặc gửi mail <a href="mailto:' + em + '">' + em + '</a>';
+  })();
+  if (!CFG.url || !CFG.anonKey) { msg.textContent = 'Chưa cấu hình được, báo Nhà của An.'; btn.disabled = true; return; }
+
+  // Phiên chỉ nằm trong tab này (giống admin.html): đóng tab là tự mất, không dùng chung phiên với admin.
+  const KEY = 'nca-partner-auth', mem = {};
+  const store = {
+    getItem: (k) => { try { const v = window.sessionStorage.getItem(k); return v === null ? (k in mem ? mem[k] : null) : v; } catch (e) { return k in mem ? mem[k] : null; } },
+    setItem: (k, v) => { try { window.sessionStorage.setItem(k, v); } catch (e) { mem[k] = v; } },
+    removeItem: (k) => { try { window.sessionStorage.removeItem(k); } catch (e) {} delete mem[k]; }
+  };
+  const client = window.supabase.createClient(CFG.url, CFG.anonKey, { auth: { storage: store, storageKey: KEY, persistSession: true, autoRefreshToken: true, detectSessionInUrl: false } });
+  window.supabaseClient = client; // bieu-mau.js dùng biến toàn cục này để đọc dữ liệu
+
+  window.loadBookings = async function () {
+    const { data } = await client.from('bookings').select('*').order('created_at', { ascending: false });
+    window.allBookings = data || [];
+    if (window.initForms) window.initForms();
+  };
+
+  function fail(t) { msg.textContent = t; btn.disabled = false; }
+
+  async function enterApp() {
+    const { data: isPartner, error } = await client.rpc('is_partner');
+    if (error || isPartner !== true) { await client.auth.signOut(); fail('Tài khoản này chưa được cấp quyền đối tác. Liên hệ Nhà của An để được thêm.'); return; }
+    $('login-box').hidden = true; $('main-box').hidden = false;
+    await loadBookings();
+  }
+
+  (async function () {
+    const { data } = await client.auth.getSession();
+    if (data && data.session) enterApp();
+  })();
+
+  $('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault(); btn.disabled = true; msg.textContent = '';
+    const email = $('pl-email').value.trim(), password = $('pl-pass').value;
+    const { error } = await client.auth.signInWithPassword({ email, password });
+    $('pl-pass').value = '';
+    if (error) return fail('Email hoặc mật khẩu chưa đúng.');
+    enterApp();
+  });
+  $('logout-btn').addEventListener('click', async () => { await client.auth.signOut(); window.location.reload(); });
+})();
+</script>
+</body>
+</html>
