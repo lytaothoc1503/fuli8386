@@ -87,14 +87,20 @@
 .nca-slip.ns-plain .ns-plain-head img.mark,.nca-slip.ns-plain .ns-plain-head svg.mark{width:30px;height:30px;border-radius:50%;object-fit:cover;background:#fff;border:1px solid var(--gold)}
 .nca-slip.ns-plain .ns-plain-head .cv-brand{font-size:10px;letter-spacing:.22em;color:var(--gold)}
 @media screen and (max-width:760px){.nca-slip.ns-plain .ns-main{padding:16px 14px}.nca-slip.ns-plain svg.ns-leaf{width:44px;height:44px}}
-/* Phiếu khách sạn (voice:hotel): logo chữ ngang, không hoạ tiết mây/đồi của homestay. */
-.nca-slip.ns-hotel .ns-side{flex-basis:228px;padding:22px 16px 18px;justify-content:flex-start}
-.nca-slip.ns-hotel .ns-side img.mark.wordmark{width:100%;height:auto;object-fit:contain;background:#fff;border-radius:8px;padding:12px 10px}
+/* Phiếu khách sạn: ảnh mặt tiền mờ phía sau, dấu riêng Grand Mercure Dalat. */
+.nca-slip.ns-hotel{background-color:#f6ebe4;background-image:url("images/grand-mercure-facade-bg.jpg");background-size:cover;background-position:center 42%}
+.nca-slip.ns-hotel .ns-side{flex-basis:236px;padding:20px 16px 16px;justify-content:flex-start}
+.nca-slip.ns-hotel.ns-red .ns-side{background:linear-gradient(180deg,rgba(74,12,22,.4),rgba(32,6,12,.48))}
+.nca-slip.ns-hotel .ns-main{background:rgba(255,250,242,.72)}
+.nca-slip.ns-hotel .ns-sec td{background:rgba(255,250,242,.88)}
+.nca-slip.ns-hotel.ns-red .ns-sec td:first-child{background:rgba(251,238,221,.9)}
+.nca-slip.ns-hotel.ns-red .ns-note{background:rgba(251,238,221,.92)}
+.nca-slip.ns-hotel .ns-side img.mark.wordmark{width:100%;height:auto;object-fit:contain;background:transparent;border-radius:0;padding:0;box-shadow:0 10px 24px rgba(20,4,8,.28)}
 .nca-slip.ns-hotel .ns-side b{letter-spacing:.1em;font-size:12.5px;line-height:1.35;margin-top:14px}
 .nca-slip.ns-hotel .ns-side small{letter-spacing:.14em;font-size:9px;line-height:1.45;display:block;margin-top:5px;opacity:.92}
-.nca-slip.ns-hotel .ns-side::after{content:"";display:block;width:64px;height:1px;margin:18px auto 0;margin-top:auto;background:rgba(201,154,62,.9)}
-.nca-slip.ns-cover .ns-banner img.mark.wordmark,.nca-slip.ns-float .ns-fl-head img.mark.wordmark,.nca-slip.ns-plain .ns-plain-head img.mark.wordmark{width:auto;height:46px;max-width:280px;border-radius:6px;object-fit:contain;background:#fff;padding:5px 8px}
-@media screen and (max-width:760px){.nca-slip.ns-hotel .ns-side{flex-direction:column;align-items:center;text-align:center;padding:16px 18px}.nca-slip.ns-hotel .ns-side img.mark.wordmark{width:min(300px,100%)}.nca-slip.ns-hotel .ns-side::after{display:none}.nca-slip.ns-hotel .ns-pay{grid-template-columns:1fr}.nca-slip.ns-hotel .ns-pay>.ns-sec{grid-column:auto!important}}`;
+.nca-slip.ns-hotel .ns-side::after{content:"";display:block;width:64px;height:1px;margin:18px auto 0;margin-top:auto;background:rgba(232,196,120,.85)}
+.nca-slip.ns-cover .ns-banner img.mark.wordmark,.nca-slip.ns-float .ns-fl-head img.mark.wordmark,.nca-slip.ns-plain .ns-plain-head img.mark.wordmark{width:auto;height:52px;max-width:280px;border-radius:0;object-fit:contain;background:#fbf6ef;padding:4px 8px}
+@media screen and (max-width:760px){.nca-slip.ns-hotel .ns-side{flex-direction:column;align-items:center;text-align:center;padding:16px 18px}.nca-slip.ns-hotel .ns-side img.mark.wordmark{width:min(280px,86%)}.nca-slip.ns-hotel .ns-side::after{display:none}.nca-slip.ns-hotel .ns-pay{grid-template-columns:1fr}.nca-slip.ns-hotel .ns-pay>.ns-sec{grid-column:auto!important}.nca-slip.ns-hotel .ns-main{background:rgba(255,250,242,.82)}}`;
     document.head.appendChild(st);
   }
 
@@ -120,7 +126,7 @@
     // Tên đơn vị/logo có thể ghi đè riêng cho từng phiếu (d.orgName/orgTag/orgLogo/orgAddress/orgPhone).
     // Để trống thì giữ đúng phiếu Nhà của An. voice:'hotel' đổi lời xưng hô sang khách sạn (không dùng "nhà" / biển mây).
     const orgName = d.orgName ? String(d.orgName).trim() : 'Nhà của An Homestay Tà Xùa';
-    const sideName = d.orgName ? String(d.orgName).trim().toUpperCase() : 'NHÀ CỦA AN';
+    const sideName = d.sideName !== undefined ? String(d.sideName).trim() : (d.orgName ? String(d.orgName).trim().toUpperCase() : 'NHÀ CỦA AN');
     const sideTag = d.orgTag !== undefined ? String(d.orgTag).trim() : 'HOMESTAY & COFFEE';
     const orgLogo = d.orgLogo ? String(d.orgLogo).trim() : '';
     const orgAddress = d.orgAddress !== undefined ? String(d.orgAddress).trim() : (S.address || '');
@@ -201,9 +207,10 @@
         <div class="ns-plain-head">${brandRow}</div>
         ${titleHtml}`;
     } else {
+      const sideCaption = (sideName || sideTag) ? `<div><b>${esc(sideName)}</b>${sideTag ? `<small>${esc(sideTag)}</small>` : ''}</div>` : '';
       frameOpen = `<div class="nca-slip${inv ? ' ns-alert' : themeCls}${rootExtra}"><div class="ns-side">
       ${markHtml}
-      <div><b>${esc(sideName)}</b>${sideTag ? `<small>${esc(sideTag)}</small>` : ''}</div>
+      ${sideCaption}
       ${hillSvg}</div>
       <div class="ns-main">${titleHtml}`;
     }
