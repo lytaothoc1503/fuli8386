@@ -86,7 +86,21 @@
 .nca-slip.ns-plain .ns-plain-head{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:4px}
 .nca-slip.ns-plain .ns-plain-head img.mark,.nca-slip.ns-plain .ns-plain-head svg.mark{width:30px;height:30px;border-radius:50%;object-fit:cover;background:#fff;border:1px solid var(--gold)}
 .nca-slip.ns-plain .ns-plain-head .cv-brand{font-size:10px;letter-spacing:.22em;color:var(--gold)}
-@media screen and (max-width:760px){.nca-slip.ns-plain .ns-main{padding:16px 14px}.nca-slip.ns-plain svg.ns-leaf{width:44px;height:44px}}`;
+@media screen and (max-width:760px){.nca-slip.ns-plain .ns-main{padding:16px 14px}.nca-slip.ns-plain svg.ns-leaf{width:44px;height:44px}}
+/* Phiếu khách sạn: ảnh mặt tiền mờ phía sau, dấu riêng Grand Mercure Dalat. */
+.nca-slip.ns-hotel{background-color:#f6ebe4;background-image:url("images/grand-mercure-facade-bg.jpg");background-size:cover;background-position:center 42%}
+.nca-slip.ns-hotel .ns-side{flex-basis:236px;padding:20px 16px 16px;justify-content:flex-start}
+.nca-slip.ns-hotel.ns-red .ns-side{background:linear-gradient(180deg,rgba(74,12,22,.4),rgba(32,6,12,.48))}
+.nca-slip.ns-hotel .ns-main{background:rgba(255,250,242,.72)}
+.nca-slip.ns-hotel .ns-sec td{background:rgba(255,250,242,.88)}
+.nca-slip.ns-hotel.ns-red .ns-sec td:first-child{background:rgba(251,238,221,.9)}
+.nca-slip.ns-hotel.ns-red .ns-note{background:rgba(251,238,221,.92)}
+.nca-slip.ns-hotel .ns-side img.mark.wordmark{width:100%;height:auto;object-fit:contain;background:transparent;border-radius:0;padding:0;box-shadow:0 10px 24px rgba(20,4,8,.28)}
+.nca-slip.ns-hotel .ns-side b{letter-spacing:.1em;font-size:12.5px;line-height:1.35;margin-top:14px}
+.nca-slip.ns-hotel .ns-side small{letter-spacing:.14em;font-size:9px;line-height:1.45;display:block;margin-top:5px;opacity:.92}
+.nca-slip.ns-hotel .ns-side::after{content:"";display:block;width:64px;height:1px;margin:18px auto 0;margin-top:auto;background:rgba(232,196,120,.85)}
+.nca-slip.ns-cover .ns-banner img.mark.wordmark,.nca-slip.ns-float .ns-fl-head img.mark.wordmark,.nca-slip.ns-plain .ns-plain-head img.mark.wordmark{width:auto;height:52px;max-width:280px;border-radius:0;object-fit:contain;background:#fbf6ef;padding:4px 8px}
+@media screen and (max-width:760px){.nca-slip.ns-hotel .ns-side{flex-direction:column;align-items:center;text-align:center;padding:16px 18px}.nca-slip.ns-hotel .ns-side img.mark.wordmark{width:min(280px,86%)}.nca-slip.ns-hotel .ns-side::after{display:none}.nca-slip.ns-hotel .ns-pay{grid-template-columns:1fr}.nca-slip.ns-hotel .ns-pay>.ns-sec{grid-column:auto!important}.nca-slip.ns-hotel .ns-main{background:rgba(255,250,242,.82)}}`;
     document.head.appendChild(st);
   }
 
@@ -109,14 +123,21 @@
     const useBankName = bName || B.bankName || B.bankId, useAccountNo = bNo || B.accountNo, useAccountName = bHolder || B.accountName;
     const bankOn = (useAccountNo || d.qrImage) && remain > 0 && total > 0 && d.hideBank !== true; // chỉ hiện khi còn tiền phải thu
     const qr = d.qrImage ? d.qrImage : (!overridingBank && bankOn && remain > 0 && B.bankId && B.accountNo ? `https://api.vietqr.io/image/${encodeURIComponent(B.bankId)}-${encodeURIComponent(B.accountNo)}-compact2.png${B.accountName ? '?accountName=' + encodeURIComponent(B.accountName) : ''}` : ''); // không tích hợp sẵn số tiền/nội dung CK — khách tự ghi; d.qrImage (ảnh tự tải lên) luôn ưu tiên
-    // Tên đơn vị/logo có thể ghi đè riêng cho từng phiếu (d.orgName/orgTag/orgLogo/orgAddress/orgPhone) — dùng khi làm phiếu cho đơn vị khác; để trống thì giữ đúng như phiếu Nhà của An
+    // Tên đơn vị/logo có thể ghi đè riêng cho từng phiếu (d.orgName/orgTag/orgLogo/orgAddress/orgPhone).
+    // Để trống thì giữ đúng phiếu Nhà của An. voice:'hotel' đổi lời xưng hô sang khách sạn (không dùng "nhà" / biển mây).
     const orgName = d.orgName ? String(d.orgName).trim() : 'Nhà của An Homestay Tà Xùa';
-    const sideName = d.orgName ? String(d.orgName).trim().toUpperCase() : 'NHÀ CỦA AN';
+    const sideName = d.sideName !== undefined ? String(d.sideName).trim() : (d.orgName ? String(d.orgName).trim().toUpperCase() : 'NHÀ CỦA AN');
     const sideTag = d.orgTag !== undefined ? String(d.orgTag).trim() : 'HOMESTAY & COFFEE';
     const orgLogo = d.orgLogo ? String(d.orgLogo).trim() : '';
     const orgAddress = d.orgAddress !== undefined ? String(d.orgAddress).trim() : (S.address || '');
     const orgPhone = d.orgPhone !== undefined ? String(d.orgPhone).trim() : (C.phone || '');
-    const steps = ['Đặt phòng', 'Chuyển khoản', 'Nhà xác nhận', 'Nhận phòng'];
+    const hotel = d.voice === 'hotel';
+    const wordmark = d.logoLayout === 'wordmark';
+    const hideMotif = d.hideMotif === true;
+    const cinT = d.checkinTime !== undefined ? String(d.checkinTime).trim() : (S.checkin || '');
+    const coutT = d.checkoutTime !== undefined ? String(d.checkoutTime).trim() : (S.checkout || '');
+    const steps = (Array.isArray(d.steps) && d.steps.length) ? d.steps.map((s) => String(s)) : (hotel ? ['Đặt phòng', 'Chuyển khoản', 'Khách sạn xác nhận', 'Nhận phòng'] : ['Đặt phòng', 'Chuyển khoản', 'Nhà xác nhận', 'Nhận phòng']);
+    const thanksHtml = d.thanks ? esc(String(d.thanks).trim()) : (hotel ? `Cảm ơn Quý khách đã chọn ${esc(orgName)}.` : `Cảm ơn Quý khách đã chọn ${esc(orgName)} làm điểm dừng chân giữa biển mây.`);
     const now = d.nowStep ?? 2;
     const dep = Number(d.depositPercent) || 0; // có giá trị = hiện cọc theo % thay vì số tiền VND cụ thể
     const promo = d.promo ? String(d.promo).trim() : ''; // ưu đãi (chữ tự do, ví dụ "giảm 100.000đ")
@@ -133,49 +154,64 @@
     const bankBox = bankOn ? `<div class="ns-sec"><h4>04 THÔNG TIN CHUYỂN KHOẢN</h4><table>
       <tr><td>Ngân hàng</td><td>${esc(useBankName)}</td></tr>${useAccountName ? `<tr><td>Chủ tài khoản</td><td>${esc(useAccountName)}</td></tr>` : ''}
       <tr><td>Số tài khoản</td><td><b>${esc(useAccountNo)}</b></td></tr><tr><td>Nội dung CK</td><td><b class="ns-warn" style="font-size:14px">${esc(d.tcode || d.code || '')}</b></td></tr></table>
-      <div class="ns-note" style="margin-top:6px"><b>⚠️ Ghi ĐÚNG nội dung chuyển khoản ở trên, không thêm/bớt chữ.</b> Nhà đối chiếu giao dịch theo đúng nội dung này; ghi sai hoặc thiếu, nhà sẽ không nhận ra được đây là đơn của bạn, cần thời gian kiểm tra thủ công và có thể chậm xác nhận phòng. Nhắn nhà kèm mã <b>${esc(d.code || '')}</b> nếu bạn lỡ ghi sai.</div>
+      <div class="ns-note" style="margin-top:6px"><b>⚠️ Ghi ĐÚNG nội dung chuyển khoản ở trên, không thêm/bớt chữ.</b> ${hotel
+        ? `Khách sạn đối chiếu giao dịch theo đúng nội dung này; ghi sai hoặc thiếu, khách sạn sẽ không nhận ra được đây là đơn của bạn, cần thời gian kiểm tra thủ công và có thể chậm xác nhận phòng. Vui lòng liên hệ khách sạn kèm mã <b>${esc(d.code || '')}</b> nếu Quý khách lỡ ghi sai.`
+        : `Nhà đối chiếu giao dịch theo đúng nội dung này; ghi sai hoặc thiếu, nhà sẽ không nhận ra được đây là đơn của bạn, cần thời gian kiểm tra thủ công và có thể chậm xác nhận phòng. Nhắn nhà kèm mã <b>${esc(d.code || '')}</b> nếu bạn lỡ ghi sai.`}</div>
       </div>
       <div class="ns-qr">${qr ? `<img src="${esc(qr)}" alt="QR chuyển khoản" />` : (remain > 0 ? 'Mã QR' : 'Đã thanh toán đủ')}</div>`
-      : `<div class="ns-sec" style="grid-column:2/4"><h4>04 THÔNG TIN CHUYỂN KHOẢN</h4><div class="ns-note" style="margin:0">Nhà sẽ gửi thông tin chuyển khoản qua Messenger/điện thoại kèm mã đơn <b>${esc(d.code || '')}</b>.</div></div>`;
+      : `<div class="ns-sec" style="grid-column:2/4"><h4>04 THÔNG TIN CHUYỂN KHOẢN</h4><div class="ns-note" style="margin:0">${hotel ? 'Khách sạn' : 'Nhà'} sẽ gửi thông tin chuyển khoản qua Messenger/điện thoại kèm mã đơn <b>${esc(d.code || '')}</b>.</div></div>`;
     const inv = d.invalid === true;
-    const alertBox = `<div class="ns-alertbox"><h4 style="margin:0 0 6px;color:var(--g);font-size:12px">04 THÔNG TIN CHUYỂN KHOẢN</h4><h5>⚠️ CHƯA ĐỐI CHIẾU ĐƯỢC GIAO DỊCH</h5>
+    const alertBox = hotel
+      ? `<div class="ns-alertbox"><h4 style="margin:0 0 6px;color:var(--g);font-size:12px">04 THÔNG TIN CHUYỂN KHOẢN</h4><h5>⚠️ CHƯA ĐỐI CHIẾU ĐƯỢC GIAO DỊCH</h5>
+      <p style="margin:0 0 8px"><b>Tóm lại:</b> khách sạn đã nhận được một khoản chuyển khoản, nhưng chưa xác định được chắc chắn là của đơn này — cần Quý khách gửi lại ảnh chụp biên lai để khách sạn đối chiếu và xác nhận giúp.</p><ul>
+      <li><b>Lý do:</b> Khách sạn nhận được một giao dịch chuyển khoản, nhưng nội dung chuyển khoản của Quý khách không chứa hoặc ghi sai Mã đơn phòng (<b>${esc(d.tcode || d.code || '')}</b>), nên chưa đối chiếu được với đơn này.${d.invalidReason ? ' ' + esc(d.invalidReason) : ''}</li>
+      <li><b>Hướng xử lý:</b> Mã đặt phòng của Quý khách tạm thời chuyển sang trạng thái <b>Chờ tra soát thủ công</b>. Quý khách vui lòng gửi ngay <b>ảnh chụp biên lai chuyển khoản thành công</b> (rõ ngày giờ, số tiền, nội dung) cho khách sạn qua Messenger/điện thoại kèm mã đơn, để khách sạn kiểm tra lại sao kê ngân hàng và xác nhận giúp Quý khách.</li>
+      <li><b>Thời gian xử lý:</b> Đơn được xác nhận lại ngay sau khi khách sạn kiểm tra sao kê và khớp được giao dịch.</li></ul></div>`
+      : `<div class="ns-alertbox"><h4 style="margin:0 0 6px;color:var(--g);font-size:12px">04 THÔNG TIN CHUYỂN KHOẢN</h4><h5>⚠️ CHƯA ĐỐI CHIẾU ĐƯỢC GIAO DỊCH</h5>
       <p style="margin:0 0 8px"><b>Tóm lại:</b> nhà đã nhận được một khoản chuyển khoản, nhưng chưa xác định được chắc chắn là của đơn này — cần Quý khách gửi lại ảnh chụp biên lai để nhà đối chiếu và xác nhận giúp.</p><ul>
       <li><b>Lý do:</b> Nhà nhận được một giao dịch chuyển khoản, nhưng nội dung chuyển khoản của Quý khách không chứa hoặc ghi sai Mã đơn phòng (<b>${esc(d.tcode || d.code || '')}</b>), nên chưa đối chiếu được với đơn này.${d.invalidReason ? ' ' + esc(d.invalidReason) : ''}</li>
       <li><b>Hướng xử lý:</b> Mã đặt phòng của Quý khách tạm thời chuyển sang trạng thái <b>Chờ tra soát thủ công</b>. Quý khách vui lòng gửi ngay <b>ảnh chụp biên lai chuyển khoản thành công</b> (rõ ngày giờ, số tiền, nội dung) cho nhà qua Messenger/điện thoại kèm mã đơn, để nhà kiểm tra lại sao kê ngân hàng và xác nhận giúp Quý khách.</li>
       <li><b>Thời gian xử lý:</b> Đơn được xác nhận lại ngay sau khi nhà kiểm tra sao kê và khớp được giao dịch.</li></ul></div>`;
     const ct = !inv && d.contact === true, C2 = (window.SITE || {}).contacts || {};
-    const contactBox = `<div class="ns-contactbox"><h4 style="margin:0 0 6px;color:var(--g);font-size:12px">04 TRAO ĐỔI VỚI NHÀ</h4><h5>💬 ĐƠN CẦN LIÊN HỆ NHÀ ĐỂ XỬ LÝ</h5>
+    const contactPhone = hotel ? orgPhone : (C2.phone || '');
+    const contactBox = hotel
+      ? `<div class="ns-contactbox"><h4 style="margin:0 0 6px;color:var(--g);font-size:12px">04 TRAO ĐỔI VỚI KHÁCH SẠN</h4><h5>💬 ĐƠN CẦN LIÊN HỆ KHÁCH SẠN ĐỂ XỬ LÝ</h5>
+      ${d.contactReason ? `<p><b>Nội dung:</b> ${esc(d.contactReason)}</p>` : ''}<p>Quý khách vui lòng nhắn Messenger${contactPhone ? ' hoặc gọi hotline <b>' + esc(contactPhone) + '</b>' : ''} kèm mã đơn <b>${esc(d.code || '')}</b> để khách sạn hỗ trợ. Quý khách <b>không cần chuyển thêm khoản tiền nào</b> cho đến khi khách sạn xác nhận lại đơn.</p></div>`
+      : `<div class="ns-contactbox"><h4 style="margin:0 0 6px;color:var(--g);font-size:12px">04 TRAO ĐỔI VỚI NHÀ</h4><h5>💬 ĐƠN CẦN LIÊN HỆ NHÀ ĐỂ XỬ LÝ</h5>
       ${d.contactReason ? `<p><b>Nội dung:</b> ${esc(d.contactReason)}</p>` : ''}<p>Quý khách vui lòng nhắn Messenger${C2.phone ? ' hoặc gọi hotline <b>' + esc(C2.phone) + '</b>' : ''} kèm mã đơn <b>${esc(d.code || '')}</b> để nhà hỗ trợ. Quý khách <b>không cần chuyển thêm khoản tiền nào</b> cho đến khi nhà xác nhận lại đơn.</p></div>`;
     const themeCls = { do: ' ns-red', xanh: ' ns-navy', la: ' ns-green' }[d.theme] || '';
+    const rootExtra = `${hotel ? ' ns-hotel' : ''}`;
     const layout = d.layout || ''; // kiểu trình bày: '' khung bên, 'cover' dải màu ngang, 'float' thẻ nổi, 'plain' giản dị — chọn ở ô "Kiểu trình bày phiếu"
-    const roundMark = layout !== ''; // 3 kiểu mới dùng logo tròn nhỏ trên đầu trang; khung bên vẫn dùng logo vuông lớn như cũ
-    const markHtml = orgLogo ? `<img class="mark" src="${esc(orgLogo)}" alt="logo" style="${roundMark ? '' : 'width:64px;height:64px;object-fit:contain;border-radius:12px;background:#fff'}" />` : `<svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="#e8b058"/><path d="M10 23 24 11l14 12v14H10z" fill="#0b3b46"/><path d="m18 28 4 4 8-9" fill="none" stroke="#e8b058" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    const roundMark = layout !== '' && !wordmark; // 3 kiểu mới dùng logo tròn nhỏ trên đầu trang; khung bên vẫn dùng logo vuông lớn như cũ. Logo chữ ngang (wordmark) không ép vào ô tròn.
+    const markHtml = orgLogo ? `<img class="mark${wordmark ? ' wordmark' : ''}" src="${esc(orgLogo)}" alt="${esc(wordmark ? (orgName || 'logo') : 'logo')}" style="${wordmark || roundMark ? '' : 'width:64px;height:64px;object-fit:contain;border-radius:12px;background:#fff'}" />` : `<svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="#e8b058"/><path d="M10 23 24 11l14 12v14H10z" fill="#0b3b46"/><path d="m18 28 4 4 8-9" fill="none" stroke="#e8b058" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
     const titleHtml = `<h2 class="ns-title">${inv ? 'PHIẾU CHỜ TRA SOÁT' : 'PHIẾU XÁC NHẬN ĐẶT PHÒNG'}</h2>
-      <div class="ns-sub">Cảm ơn Quý khách đã chọn ${esc(orgName)} làm điểm dừng chân giữa biển mây.</div>
+      <div class="ns-sub">${thanksHtml}</div>
       <div class="ns-code"><span>Mã booking</span><span>${dots(d.code, 10)}</span></div>`;
     const brandRow = `<div class="cv-row">${markHtml}<span class="cv-brand">${esc(sideName)}${sideTag ? ' · ' + esc(sideTag) : ''}</span></div>`;
     let frameOpen;
+    const hillSvg = hideMotif ? '' : `<svg class="hill" viewBox="0 0 190 150" aria-hidden="true"><g fill="none" stroke="#c8902e" stroke-width="1.4" opacity=".85"><path d="M0 120c30-35 55-45 85-20 25-30 55-40 105 0"/><path d="M0 138c40-20 80-25 190 0"/><path d="M40 100l8-34 8 34M30 100h36M95 105l7-28 7 28M86 105h32M140 98l6-24 6 24M132 98h28"/><path d="M20 62c10-8 22-8 30 0M130 40c10-8 24-8 32 0M70 30c8-6 18-6 24 0"/></g></svg>`;
     if (layout === 'cover') {
-      frameOpen = `<div class="nca-slip ns-cover${inv ? ' ns-alert' : themeCls}"><div class="ns-banner">
-        <svg class="hill2" viewBox="0 0 400 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 50c40-30 70-40 110-18 30-25 60-32 110-6 35-22 70-26 180 4V60H0Z" fill="#000" opacity=".25"/></svg>
+      frameOpen = `<div class="nca-slip ns-cover${inv ? ' ns-alert' : themeCls}${rootExtra}"><div class="ns-banner">
+        ${hideMotif ? '' : `<svg class="hill2" viewBox="0 0 400 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 50c40-30 70-40 110-18 30-25 60-32 110-6 35-22 70-26 180 4V60H0Z" fill="#000" opacity=".25"/></svg>`}
         ${brandRow}
         ${titleHtml}</div>
         <div class="ns-main">`;
     } else if (layout === 'float') {
-      frameOpen = `<div class="nca-slip ns-float${inv ? ' ns-alert' : themeCls}">
+      frameOpen = `<div class="nca-slip ns-float${inv ? ' ns-alert' : themeCls}${rootExtra}">
         <div class="ns-fl-head">${brandRow}${titleHtml}</div>
         <div class="ns-main">`;
     } else if (layout === 'plain') {
-      frameOpen = `<div class="nca-slip ns-plain${inv ? ' ns-alert' : themeCls}">
+      frameOpen = `<div class="nca-slip ns-plain${inv ? ' ns-alert' : themeCls}${rootExtra}">
         <div class="ns-main">
-        <svg class="ns-leaf" viewBox="0 0 100 100" aria-hidden="true"><g fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M90 10C70 20 55 35 50 55"/><path d="M50 55c8-4 16-4 22 2"/><path d="M50 55c6-10 14-14 24-12"/><path d="M50 55c2-10 8-18 18-20"/><path d="M50 55c-2-10-2-20 6-30"/></g></svg>
+        ${hideMotif ? '' : `<svg class="ns-leaf" viewBox="0 0 100 100" aria-hidden="true"><g fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M90 10C70 20 55 35 50 55"/><path d="M50 55c8-4 16-4 22 2"/><path d="M50 55c6-10 14-14 24-12"/><path d="M50 55c2-10 8-18 18-20"/><path d="M50 55c-2-10-2-20 6-30"/></g></svg>`}
         <div class="ns-plain-head">${brandRow}</div>
         ${titleHtml}`;
     } else {
-      frameOpen = `<div class="nca-slip${inv ? ' ns-alert' : themeCls}"><div class="ns-side">
+      const sideCaption = (sideName || sideTag) ? `<div><b>${esc(sideName)}</b>${sideTag ? `<small>${esc(sideTag)}</small>` : ''}</div>` : '';
+      frameOpen = `<div class="nca-slip${inv ? ' ns-alert' : themeCls}${rootExtra}"><div class="ns-side">
       ${markHtml}
-      <div><b>${esc(sideName)}</b>${sideTag ? `<small>${esc(sideTag)}</small>` : ''}</div>
-      <svg class="hill" viewBox="0 0 190 150" aria-hidden="true"><g fill="none" stroke="#c8902e" stroke-width="1.4" opacity=".85"><path d="M0 120c30-35 55-45 85-20 25-30 55-40 105 0"/><path d="M0 138c40-20 80-25 190 0"/><path d="M40 100l8-34 8 34M30 100h36M95 105l7-28 7 28M86 105h32M140 98l6-24 6 24M132 98h28"/><path d="M20 62c10-8 22-8 30 0M130 40c10-8 24-8 32 0M70 30c8-6 18-6 24 0"/></g></svg></div>
+      ${sideCaption}
+      ${hillSvg}</div>
       <div class="ns-main">${titleHtml}`;
     }
     const bodyHtml = `
@@ -184,11 +220,13 @@
         ${d.cccdLine ? `<tr><td>CCCD/Hộ chiếu</td><td>${dots(d.cccd, 18)}</td></tr>` : ''}</table></div>
         <div class="ns-sec"><h4>02 THÔNG TIN LƯU TRÚ</h4><table>
         <tr><td>Hạng phòng</td><td><b>${dots(d.room, 20)}</b></td></tr><tr><td>Số phòng</td><td>${dots(d.roomNo, 8)}</td></tr>
-        <tr><td>Nhận phòng</td><td>${dots(vd(d.checkin), 10)}${S.checkin ? ' · từ ' + esc(S.checkin) : ''}</td></tr><tr><td>Trả phòng</td><td>${dots(vd(d.checkout), 10)}${S.checkout ? ' · trước ' + esc(S.checkout) : ''}</td></tr>
+        <tr><td>Nhận phòng</td><td>${dots(vd(d.checkin), 10)}${cinT ? ' · từ ' + esc(cinT) : ''}</td></tr><tr><td>Trả phòng</td><td>${dots(vd(d.checkout), 10)}${coutT ? ' · trước ' + esc(coutT) : ''}</td></tr>
         <tr><td>Số đêm</td><td>${dots(n, 4)}</td></tr></table></div></div>
       <div class="ns-pay">${pay}${inv ? alertBox : (ct ? contactBox : bankBox)}</div>
       <div class="ns-flow">${steps.map((s, i) => inv ? `<div class="${i < 1 ? 'on' : (i === 1 ? 'cur' : '')}">${i + 1}. ${i === 1 ? 'Chờ tra soát' : s}</div>` : `<div class="${i <= now ? 'on' : ''}">${i + 1}. ${s}</div>`).join('')}</div>
-      <div class="ns-note"><b>Khi nhận phòng:</b> người đại diện đặt phòng chỉ cần mang CCCD hoặc VNeID (khách nước ngoài mang hộ chiếu). Với khách đi cùng, bạn gửi nhà họ tên và số định danh để nhà khai báo lưu trú theo quy định. Muốn đổi hoặc hủy, nhắn nhà sớm kèm mã booking; hoàn tiền theo chính sách hoàn hủy đã công bố, về đúng tài khoản bạn cung cấp và có biên bản xác nhận.${d.extra ? '<br>' + esc(d.extra) : ''}</div>
+      <div class="ns-note"><b>Khi nhận phòng:</b> người đại diện đặt phòng chỉ cần mang CCCD hoặc VNeID (khách nước ngoài mang hộ chiếu). ${hotel
+        ? `Với khách đi cùng, Quý khách gửi khách sạn họ tên và số định danh để khách sạn khai báo lưu trú theo quy định. Muốn đổi hoặc hủy, vui lòng liên hệ khách sạn sớm kèm mã booking; hoàn tiền theo chính sách hoàn hủy đã công bố, về đúng tài khoản Quý khách cung cấp và có biên bản xác nhận.`
+        : `Với khách đi cùng, bạn gửi nhà họ tên và số định danh để nhà khai báo lưu trú theo quy định. Muốn đổi hoặc hủy, nhắn nhà sớm kèm mã booking; hoàn tiền theo chính sách hoàn hủy đã công bố, về đúng tài khoản bạn cung cấp và có biên bản xác nhận.`}${d.extra ? '<br>' + esc(d.extra) : ''}</div>
       <div class="ns-foot"><span>${esc(orgName)}</span>${orgAddress ? `<span>Địa chỉ: ${esc(orgAddress)}</span>` : ''}${orgPhone ? `<span>Hotline: ${esc(orgPhone)}</span>` : ''}</div>
       </div></div>`;
     return frameOpen + bodyHtml;
